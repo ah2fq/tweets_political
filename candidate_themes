@@ -1,0 +1,54 @@
+# import packages
+import tweepy
+import pandas as pd
+import markovify as mk
+import os
+import csv
+
+# set wd
+os.chdir("/Users/alexhendel/Desktop/")
+
+# use Twitter API keys
+consumer_key = 
+consumer_secret =
+access_key = 
+access_secret = 
+
+# define get_tweets to download tweets
+def get_tweets(username, numtweets, filterRT):
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_key, access_secret)
+    api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+
+    tmp = []
+    
+    for tweet in tweepy.Cursor(api.user_timeline, id=username, tweet_mode='extended').items(numtweets):
+        tmp.append(tweet.full_text)
+    if filterRT == True:
+        tmp = filter(lambda x: 'RT @' not in x, tmp)
+    return(tmp)
+
+# read relevant list of Twitter handles
+# df = pd.read_csv('TwitterCandidates.csv')
+# handles = df['Twitter'].tolist()
+# print(handles)
+
+# create list of counts for key words for each handle
+count_list = []
+search_terms = ["Trump", "President"]
+handle_list = ['ewarren', 'MichaelBennet', 'JoeBiden']
+for i in handle_list:
+    temp = get_tweets(i, 100, True)
+    final_index = len(temp)-1
+    list_counts = [i]
+    for y in search_terms:
+        term = 0
+        for j in temp:
+            if y in j:
+                term += 1
+            else:
+                pass
+        if temp[j] != temp[final_index]:
+            list_counts.append(term)
+        else: 
+            count_list.append(list_counts)
